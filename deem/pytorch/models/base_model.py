@@ -200,7 +200,7 @@ class BaseModel(nn.Module):
             epoch_loss += loss.item()
             self.on_batch_end(train_generator, batch_index)
             if batch_index%num_batches_for_prog == 0:
-                print(batch_index, '/', self._batches_per_epoch, 'batches done')
+                print(batch_index, '/', self._batches_per_epoch, ' batches done', sep='')
             if self._stop_training:
                 break
         return epoch_loss / self._batches_per_epoch
