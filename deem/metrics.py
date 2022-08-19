@@ -24,16 +24,17 @@ def evaluate_metrics(user_embs,
             raise NotImplementedError('metrics={} not implemented.'.format(metric))
     
     if parallel:
-        num_workers = 2
+        num_workers = 16
         with ProcessPoolExecutor(max_workers=num_workers) as executor:
-            chunk_size = int(np.ceil(len(user_embs) / float(num_workers)))
+            #chunk_size = int(np.ceil(len(user_embs) / float(num_workers)))
+            chunk_size = 64
             tasks = []
             for idx in range(0, len(user_embs), chunk_size):
                 chunk_user_embs = user_embs[idx: (idx + chunk_size), :]
                 chunk_query_indexes = query_indexes[idx: (idx + chunk_size)]
                 tasks.append(executor.submit(evaluate_block, chunk_user_embs, item_embs, chunk_query_indexes,
                                              train_user2items, valid_user2items, metric_callers, max_topk))
-            results = [res for future in tqdm(as_completed(tasks), total=len(tasks)) for res in future.result()]
+            results = [res for future in tqdm(as_completed(tasks), total=len(tasks), disable=True) for res in future.result()]
     else:
         results = evaluate_block(user_embs, item_embs, query_indexes, train_user2items, 
                                  valid_user2items, metric_callers, max_topk)
@@ -41,7 +42,6 @@ def evaluate_metrics(user_embs,
     return_dict = dict(zip(metrics, average_result))
     logging.info('[Metrics] ' + ' - '.join('{}: {:.6f}'.format(k, v) for k, v in zip(metrics, average_result)))
     return return_dict
-
 
 def evaluate_block(chunk_user_embs, item_embs, chunk_query_indexes, train_user2items, 
                    valid_user2items, metric_callers, max_topk):
