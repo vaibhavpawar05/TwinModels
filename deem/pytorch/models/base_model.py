@@ -187,6 +187,7 @@ class BaseModel(nn.Module):
         epoch_loss = 0
         model = self.train()
         batch_generator = train_generator
+        num_batches_for_prog = int(self._batches_per_epoch // 10)
         if self._verbose > 0:
             batch_generator = tqdm(train_generator, disable=True)#, file=sys.stdout)
         for batch_index, batch_data in enumerate(batch_generator):
@@ -198,6 +199,8 @@ class BaseModel(nn.Module):
             self.optimizer.step()
             epoch_loss += loss.item()
             self.on_batch_end(train_generator, batch_index)
+            if batch_index%num_batches_for_prog == 0:
+                print(batch_index, '/', self._batches_per_epoch, 'batches done')
             if self._stop_training:
                 break
         return epoch_loss / self._batches_per_epoch
