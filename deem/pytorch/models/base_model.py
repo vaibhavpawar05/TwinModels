@@ -188,7 +188,7 @@ class BaseModel(nn.Module):
         model = self.train()
         batch_generator = train_generator
         if self._verbose > 0:
-            batch_generator = tqdm(train_generator, disable=False)#, file=sys.stdout)
+            batch_generator = tqdm(train_generator, disable=True)#, file=sys.stdout)
         for batch_index, batch_data in enumerate(batch_generator):
             self.optimizer.zero_grad()
             return_dict = model.forward(batch_data)
