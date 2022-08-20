@@ -24,7 +24,7 @@ def evaluate_metrics(user_embs,
             raise NotImplementedError('metrics={} not implemented.'.format(metric))
     
     if parallel:
-        num_workers = 40
+        num_workers = 28
         with ProcessPoolExecutor(max_workers=num_workers) as executor:
             #chunk_size = int(np.ceil(len(user_embs) / float(num_workers)))
             chunk_size = 500
