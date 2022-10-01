@@ -34,7 +34,7 @@ def load_model_config(config_dir, experiment_id):
     found_keys = []
     for config in model_configs:
         with open(config, "r") as cfg:
-            config_dict = yaml.load(cfg)
+            config_dict = yaml.load(cfg, yaml.SafeLoader)
             if "Base" in config_dict:
                 params.update(config_dict["Base"])
                 found_keys.append("Base")
